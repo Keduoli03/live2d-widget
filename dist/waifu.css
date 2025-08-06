@@ -5,7 +5,7 @@
 	cursor: pointer;
 	display: flex;
 	justify-content: flex-end;
-	left: 0;
+	left: 20;
 	margin-left: -100px;
 	padding: 5px;
 	position: fixed;
