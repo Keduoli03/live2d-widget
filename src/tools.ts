@@ -48,27 +48,24 @@ class ToolsManager {
       hitokoto: {
         icon: fa_comment,
         callback: async () => {
-          // 尝试官方API
-          const response = await fetch('https://v1.hitokoto.cn');
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-          }
-          const result = await response.json();
-          const template = tips.message.hitokoto;
-          const text = i18n(template, result.from, result.creator);
-          showMessage(result.hitokoto, 6000, 9);
-          setTimeout(() => {
-            showMessage(text, 4000, 9);
-          }, 6000);
-        } catch (error) {
-          console.error('一言API错误:', error);
-          // 备用方案：使用替代API
           try {
-            const response = await fetch('https://hitokoto.open.beeapi.cn/random');
+            const response = await fetch('https://v1.hitokoto.cn');
             const result = await response.json();
-            showMessage(result.hitokoto || result.content, 6000, 9);
-          } catch (fallbackError) {
-            console.error('备用API也失败:', fallbackError);
+            const template = tips.message.hitokoto;
+            const text = i18n(template, result.from, result.creator);
+            
+            // 显示一言内容，包含UUID链接
+            let message = result.hitokoto;
+            if (result.uuid) {
+              message += ` <a href="https://hitokoto.cn/?uuid=${result.uuid}" target="_blank" style="color: inherit; text-decoration: none;">🔗</a>`;
+            }
+            
+            showMessage(message, 6000, 9);
+            setTimeout(() => {
+              showMessage(text, 4000, 9);
+            }, 6000);
+          } catch (error) {
+            console.error('一言API错误:', error);
             showMessage('今日一言暂时无法获取', 3000, 9);
           }
         }
