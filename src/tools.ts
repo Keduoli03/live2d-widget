@@ -5,10 +5,10 @@
 
 import {
   fa_comment,
-  fa_paper_plane,
+  // fa_paper_plane,  // 注释掉发送功能图标
   fa_street_view,
   fa_shirt,
-  fa_camera_retro,
+  // fa_camera_retro,  // 注释掉拍照功能图标
   fa_info_circle,
   fa_xmark
 } from './icons.js';
@@ -48,8 +48,11 @@ class ToolsManager {
       hitokoto: {
         icon: fa_comment,
         callback: async () => {
-          // Add hitokoto.cn API
+          // 尝试官方API
           const response = await fetch('https://v1.hitokoto.cn');
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
           const result = await response.json();
           const template = tips.message.hitokoto;
           const text = i18n(template, result.from, result.creator);
@@ -57,22 +60,33 @@ class ToolsManager {
           setTimeout(() => {
             showMessage(text, 4000, 9);
           }, 6000);
-        }
-      },
-      asteroids: {
-        icon: fa_paper_plane,
-        callback: () => {
-          if (window.Asteroids) {
-            if (!window.ASTEROIDSPLAYERS) window.ASTEROIDSPLAYERS = [];
-            window.ASTEROIDSPLAYERS.push(new window.Asteroids());
-          } else {
-            const script = document.createElement('script');
-            script.src =
-              'https://fastly.jsdelivr.net/gh/stevenjoezhang/asteroids/asteroids.js';
-            document.head.appendChild(script);
+        } catch (error) {
+          console.error('一言API错误:', error);
+          // 备用方案：使用替代API
+          try {
+            const response = await fetch('https://hitokoto.open.beeapi.cn/random');
+            const result = await response.json();
+            showMessage(result.hitokoto || result.content, 6000, 9);
+          } catch (fallbackError) {
+            console.error('备用API也失败:', fallbackError);
+            showMessage('今日一言暂时无法获取', 3000, 9);
           }
         }
       },
+      // asteroids: {  // 注释掉发送功能
+      //   icon: fa_paper_plane,
+      //   callback: () => {
+      //     if (window.Asteroids) {
+      //       if (!window.ASTEROIDSPLAYERS) window.ASTEROIDSPLAYERS = [];
+      //       window.ASTEROIDSPLAYERS.push(new window.Asteroids());
+      //     } else {
+      //       const script = document.createElement('script');
+      //       script.src =
+      //         'https://fastly.jsdelivr.net/gh/stevenjoezhang/asteroids/asteroids.js';
+      //       document.head.appendChild(script);
+      //     }
+      //   }
+      // },
       'switch-model': {
         icon: fa_street_view,
         callback: () => model.loadNextModel()
@@ -88,25 +102,25 @@ class ToolsManager {
           model.loadRandTexture(successMessage, failMessage);
         }
       },
-      photo: {
-        icon: fa_camera_retro,
-        callback: () => {
-          const message = tips.message.photo;
-          showMessage(message, 6000, 9);
-          const canvas = document.getElementById('live2d') as HTMLCanvasElement;
-          if (!canvas) return;
-          const imageUrl = canvas.toDataURL();
-
-          const link = document.createElement('a');
-          link.style.display = 'none';
-          link.href = imageUrl;
-          link.download = 'live2d-photo.png';
-
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      },
+      // photo: {  // 注释掉拍照功能
+      //   icon: fa_camera_retro,
+      //   callback: () => {
+      //     const message = tips.message.photo;
+      //     showMessage(message, 6000, 9);
+      //     const canvas = document.getElementById('live2d') as HTMLCanvasElement;
+      //     if (!canvas) return;
+      //     const imageUrl = canvas.toDataURL();
+      //
+      //     const link = document.createElement('a');
+      //     link.style.display = 'none';
+      //     link.href = imageUrl;
+      //     link.download = 'live2d-photo.png';
+      //
+      //     document.body.appendChild(link);
+      //     link.click();
+      //     document.body.removeChild(link);
+      //   }
+      // },
       info: {
         icon: fa_info_circle,
         callback: () => {
