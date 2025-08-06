@@ -1,5 +1,6 @@
 import terser from '@rollup/plugin-terser';
 import alias from '@rollup/plugin-alias';
+import typescript from '@rollup/plugin-typescript';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -43,6 +44,14 @@ export default {
           replacement: path.resolve(cubismDir, 'Framework/src/')
         }
       ]
+    }),
+    typescript({
+      tsconfig: false,
+      compilerOptions: {
+        target: 'es2015',
+        module: 'esnext',
+        moduleResolution: 'node'
+      }
     }),
     terser(),
   ],
