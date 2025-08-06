@@ -186,4 +186,8 @@ export class AppDelegate extends LAppDelegate {
     get subdelegates() {
         return this._subdelegates;
     }
+    initialize() {
+        const result = super.initialize();
+        return result;
+    }
 }

@@ -19,4 +19,5 @@ export class AppDelegate {
     initializeSubdelegates(): void;
     changeModel(modelSettingPath: string): void;
     get subdelegates(): any;
+    initialize(): any;
 }
