@@ -18,11 +18,14 @@ function loadExternalResource(url, type) {
       tag = document.createElement('link');
       tag.rel = 'stylesheet';
       tag.href = url;
+      tag.setAttribute('charset', 'utf-8'); // 添加字符编码
     }
     else if (type === 'js') {
       tag = document.createElement('script');
       tag.type = 'module';
       tag.src = url;
+      tag.setAttribute('charset', 'utf-8'); // 添加字符编码
+
     }
     if (tag) {
       tag.onload = () => resolve(url);
